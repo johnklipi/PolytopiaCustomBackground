@@ -1,4 +1,5 @@
-﻿using HarmonyLib;
+﻿using BepInEx.Logging;
+using HarmonyLib;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,8 +9,10 @@ public static class Main
 {
     public static readonly string BASE_PATH = Path.Combine(BepInEx.Paths.BepInExRootPath, "..");
     private static bool hasBg = false;
-    public static void Load()
+    private static ManualLogSource? modLogger;
+    public static void Load(ManualLogSource logger)
     {
+        modLogger = logger;
         Harmony.CreateAndPatchAll(typeof(Main));
     }
 
@@ -22,15 +25,15 @@ public static class Main
 
         if (File.Exists(filePath))
         {
-            __instance.nature.sprite = PolyMod.SpritesLoader.BuildSprite(File.ReadAllBytes(filePath), new Vector2(0, 0));
+            __instance.nature.sprite = PolyMod.Managers.Visual.BuildSprite(File.ReadAllBytes(filePath), new Vector2(0, 0));
             __instance.starContainer.gameObject.SetActive(false);
             __instance.gradientBgSprite.gameObject.SetActive(false);
             hasBg = true;
-            Console.WriteLine("Background image found and set!");
+            modLogger.LogInfo("Background image found and set!");
         }
         else
         {
-            Console.WriteLine("Background image not found!");
+            modLogger.LogInfo("Background image not found!");
         }
     }
 

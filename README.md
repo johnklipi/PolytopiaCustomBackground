@@ -1,4 +1,4 @@
-# PolyPlus
+# PolytopiaCustomBackground
 ![](https://img.shields.io/github/downloads/johnklipi/PolytopiaCustomBackground/total)
 ## Requirements
 

@@ -23,21 +23,43 @@ public static class Main
         string fileName = "background.png";
         string filePath = Path.Combine(BASE_PATH, fileName);
 
-        if (File.Exists(filePath))
+        if (!File.Exists(filePath))
         {
-            __instance.nature.sprite = PolyMod.Managers.Visual.BuildSprite(File.ReadAllBytes(filePath), new Vector2(0, 0));
-            __instance.starContainer.gameObject.SetActive(false);
-            __instance.gradientBgSprite.gameObject.SetActive(false);
-            hasBg = true;
-            modLogger.LogInfo("Background image found and set!");
+            modLogger!.LogInfo("Background image not found!");
+            return;
         }
-        else
-        {
-            modLogger.LogInfo("Background image not found!");
-        }
+        __instance.nature.sprite = PolyMod.Managers.Visual.BuildSprite(File.ReadAllBytes(filePath), new Vector2(0, 0));
+        __instance.starContainer.gameObject.SetActive(false);
+        __instance.gradientBgSprite.gameObject.SetActive(false);
+        hasBg = true;
+        modLogger!.LogInfo("Background image found and set!");
     }
 
-    [HarmonyPrefix]
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(GameSetupScreenView), nameof(GameSetupScreenView.Init))]
+    private static void GameSetupScreenView_Init(GameSetupScreenView __instance, RectTransform holder)
+    {
+        if(hasBg)
+            __instance.scroller.ShowTopFade(false);
+    }
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(GameModeScreen_UI2), nameof(GameModeScreen_UI2.Init))]
+    private static void GameModeScreen_UI2_Init(GameModeScreen_UI2 __instance, RectTransform transform)
+    {
+        if(hasBg)
+            __instance.scroll.ShowTopFade(false);
+    }
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(TribePickerScreen_UI2), nameof(TribePickerScreen_UI2.Init))]
+    private static void TribePickerScreen_UI2_Init(TribePickerScreen_UI2 __instance, RectTransform transform)
+    {
+        if(hasBg)
+            __instance.scroll.ShowTopFade(false);
+    }
+
+    [HarmonyPrefix] // Old ui
     [HarmonyPatch(typeof(ScrollerGradient), nameof(ScrollerGradient.OnEnable))]
     private static void ScrollerGradient_OnEnable(ScrollerGradient __instance)
     {

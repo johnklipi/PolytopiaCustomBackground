@@ -1,5 +1,7 @@
 {
 	"id": "polytopiacustombg",
 	"version": "1.0.2",
-	"authors": ["JohnKlipi"]
+	"authors": ["JohnKlipi"],
+	"name": "Polytopia CustomBG",
+	"description": "Mod which lets you change menu bg, by naming an image background.png and putting it in Polytopia's Root Folder."
 }

@@ -1,0 +1,77 @@
+{
+	"custombg_settings_show": {
+		"English": "Show background settings"
+	},
+	"custombg_settings_hide": {
+		"English": "Hide background settings"
+	},
+	"custombg_gradient": {
+		"English": "Sky gradient"
+	},
+	"custombg_gradient_original": {
+		"English": "Original"
+	},
+	"custombg_gradient_custom": {
+		"English": "Custom (json)"
+	},
+	"custombg_gradient_dusk": {
+		"English": "Dusk"
+	},
+	"custombg_gradient_sunset": {
+		"English": "Sunset"
+	},
+	"custombg_gradient_ocean": {
+		"English": "Ocean"
+	},
+	"custombg_gradient_aurora": {
+		"English": "Aurora"
+	},
+	"custombg_gradient_midnight": {
+		"English": "Midnight"
+	},
+	"custombg_gradient_lava": {
+		"English": "Lava"
+	},
+	"custombg_gradient_rose": {
+		"English": "Rose"
+	},
+	"custombg_gradient_mono": {
+		"English": "Mono"
+	},
+	"custombg_hue": {
+		"English": "Gradient hue: {0}°"
+	},
+	"custombg_brightness": {
+		"English": "Gradient brightness: {0}%"
+	},
+	"custombg_fit": {
+		"English": "Background image fit"
+	},
+	"custombg_fit_cover": {
+		"English": "Cover"
+	},
+	"custombg_fit_stretch": {
+		"English": "Stretch"
+	},
+	"custombg_fit_fit": {
+		"English": "Fit"
+	},
+	"custombg_landscape": {
+		"English": "Landscape"
+	},
+	"custombg_stars": {
+		"English": "Stars"
+	},
+	"custombg_show": {
+		"English": "Show"
+	},
+	"custombg_hide": {
+		"English": "Hide"
+	},
+	"custombg_reload": {
+		"English": "Reload images"
+	},
+	"custombg_openfolder": {
+		"English": "Open image folder"
+	}
+}

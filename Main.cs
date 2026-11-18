@@ -7,72 +7,105 @@ namespace PolytopiaCustomBackground;
 
 public static class Main
 {
-    public static readonly string BASE_PATH = Path.Combine(BepInEx.Paths.BepInExRootPath, "..");
-    private static bool hasBg = false;
-    private static ManualLogSource? modLogger;
+    public static ManualLogSource? modLogger;
+
     public static void Load(ManualLogSource logger)
     {
         modLogger = logger;
+        BgConfig.Read();
         Harmony.CreateAndPatchAll(typeof(Main));
+        Harmony.CreateAndPatchAll(typeof(UI));
     }
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(StartSceneBg), nameof(StartSceneBg.Start))]
-    private static void StartSceneBg_Start(StartSceneBg __instance)
+    private static void StartSceneBg_Start_Prefix(StartSceneBg __instance)
     {
-        string fileName = "background.png";
-        string filePath = Path.Combine(BASE_PATH, fileName);
-
-        if (!File.Exists(filePath))
+        try
         {
-            modLogger!.LogInfo("Background image not found!");
-            return;
+            BackgroundManager.OnBeforeStart(__instance);
         }
-        __instance.nature.sprite = PolyMod.Managers.Visual.BuildSprite(File.ReadAllBytes(filePath), new Vector2(0, 0));
-        __instance.starContainer.gameObject.SetActive(false);
-        __instance.gradientBgSprite.gameObject.SetActive(false);
-        hasBg = true;
-        modLogger!.LogInfo("Background image found and set!");
+        catch (Exception e)
+        {
+            modLogger!.LogError($"Could not set up the menu background: {e}");
+        }
     }
 
     [HarmonyPostfix]
-    [HarmonyPatch(typeof(GameSetupScreenView), nameof(GameSetupScreenView.Init))]
-    private static void GameSetupScreenView_Init(GameSetupScreenView __instance, RectTransform holder)
+    [HarmonyPatch(typeof(StartSceneBg), nameof(StartSceneBg.Start))]
+    private static void StartSceneBg_Start_Postfix(StartSceneBg __instance)
     {
-        if(hasBg)
-            __instance.scroller.ShowTopFade(false);
+        try
+        {
+            BackgroundManager.OnAfterStart(__instance);
+        }
+        catch (Exception e)
+        {
+            modLogger!.LogError($"Could not set up the menu background: {e}");
+        }
     }
 
     [HarmonyPostfix]
-    [HarmonyPatch(typeof(GameModeScreen_UI2), nameof(GameModeScreen_UI2.Init))]
-    private static void GameModeScreen_UI2_Init(GameModeScreen_UI2 __instance, RectTransform transform)
+    [HarmonyPatch(typeof(StartSceneBg), nameof(StartSceneBg.OnScreenSizeChanged))]
+    private static void StartSceneBg_OnScreenSizeChanged(StartSceneBg __instance) => BackgroundManager.OnScreenSizeChanged(__instance);
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(StartSceneBg), nameof(StartSceneBg.Update))]
+    private static void StartSceneBg_Update(StartSceneBg __instance) => BackgroundManager.OnUpdate(__instance);
+
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(StartScreen_UI2), nameof(StartScreen_UI2.Init))]
+    private static void StartScreen_UI2_Init(StartScreen_UI2 __instance)
     {
-        if(hasBg)
-            __instance.scroll.ShowTopFade(false);
+        try
+        {
+            BackgroundManager.OnStartScreenInit(__instance);
+        }
+        catch (Exception e)
+        {
+            modLogger!.LogError($"Could not set up the menu logo: {e}");
+        }
     }
 
     [HarmonyPostfix]
-    [HarmonyPatch(typeof(TribePickerScreen_UI2), nameof(TribePickerScreen_UI2.Init))]
-    private static void TribePickerScreen_UI2_Init(TribePickerScreen_UI2 __instance, RectTransform transform)
+    [HarmonyPatch(typeof(StartScreen_UI2), nameof(StartScreen_UI2.RunLayout))]
+    private static void StartScreen_UI2_RunLayout(StartScreen_UI2 __instance, ScreenBase_UI2.ScreenSize screenSize)
     {
-        if(hasBg)
-            __instance.scroll.ShowTopFade(false);
+        try
+        {
+            BackgroundManager.OnStartScreenLayout(__instance, screenSize);
+        }
+        catch (Exception e)
+        {
+            modLogger!.LogError($"Could not lay out the menu logo: {e}");
+        }
     }
 
-    [HarmonyPrefix] // Old ui
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(UIScroller_UI2), nameof(UIScroller_UI2.LayoutTopFade))]
+    private static void UIScroller_UI2_LayoutTopFade(UIScroller_UI2 __instance)
+    {
+        try
+        {
+            BackgroundManager.StyleTopFade(__instance);
+        }
+        catch (Exception e)
+        {
+            modLogger!.LogError($"Could not style the scroll fade: {e}");
+        }
+    }
+
+    [HarmonyPrefix]
     [HarmonyPatch(typeof(ScrollerGradient), nameof(ScrollerGradient.OnEnable))]
     private static void ScrollerGradient_OnEnable(ScrollerGradient __instance)
     {
-        if(hasBg)
+        if (!BackgroundManager.IsCustomized)
+            return;
+        Image[] allImages = GameObject.FindObjectsOfType<Image>();
+        foreach (Image image in allImages)
         {
-            Image[] allImages = GameObject.FindObjectsOfType<Image>();
-            foreach (Image image in allImages)
-            {
-                if (image.gameObject.name == "ScrollerTopGradient")
-                {
-                    GameObject.Destroy(image);
-                }
-            }
+            if (image.gameObject.name == "ScrollerTopGradient")
+                GameObject.Destroy(image);
         }
     }
 }

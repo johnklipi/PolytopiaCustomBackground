@@ -1,7 +1,7 @@
 {
 	"id": "polytopiacustombg",
-	"version": "1.0.2",
+	"version": "1.1.0",
 	"authors": ["JohnKlipi"],
 	"name": "Polytopia CustomBG",
-	"description": "Mod which lets you change menu bg, by naming an image background.png and putting it in Polytopia's Root Folder."
+	"description": "Customize the main menu: background.png sky, foreground.png landscape and a custom sky gradient, editable from Settings."
 }
